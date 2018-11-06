@@ -19,6 +19,12 @@ class Origin(models.Model):
     def __str__(self):
         return self.name
 
+    def hero_count(self,):
+        return self.hero_set.count()
+
+    def villain_count(self):
+        return self.villain_set.count()
+
 
 class Entity(models.Model):
     GENDER_MALE = "Male"
