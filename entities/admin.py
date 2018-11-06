@@ -13,6 +13,9 @@ class OriginAdmin(admin.ModelAdmin):
     def villain_count(self, obj):
         return obj.villain_set.count()
 
+    hero_count.admin_order_field = 'hero_count'
+    villain_count.admin_order_field = 'villain_count'
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

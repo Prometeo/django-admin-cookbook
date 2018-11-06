@@ -22,7 +22,7 @@ class Origin(models.Model):
     def hero_count(self,):
         return self.hero_set.count()
 
-    def villain_count(self):
+    def villain_count(self,):
         return self.villain_set.count()
 
 
