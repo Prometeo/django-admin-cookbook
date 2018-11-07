@@ -83,6 +83,11 @@ class Hero(Entity):
 class HeroAcquaintance(models.Model):
     "Non family contacts of a Hero"
     hero = models.OneToOneField(Hero, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, default=1, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.category = self.hero.category
+        super().save(*args, **kwargs)
 
 
 class Villain(Entity):
