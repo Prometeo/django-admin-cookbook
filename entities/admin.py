@@ -55,6 +55,10 @@ class HeroAdmin(admin.ModelAdmin):
     list_display = ("name", "is_immortal", "category",
                     "origin", "is_very_benevolent")
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
+    actions = ["mark_immortal"]
+
+    def mark_immortal(self, request, queryset):
+        queryset.update(is_immortal=True)
 
     def is_very_benevolent(self, obj):
         return obj.benevolence_factor > 75
