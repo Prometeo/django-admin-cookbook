@@ -32,9 +32,13 @@ class OriginAdmin(admin.ModelAdmin):
     villain_count.admin_order_field = '_villain_count'
 
 
+class VillainInline(admin.StackedInline):
+    model = Villain
+
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    inlines = [VillainInline]
 
 
 class ExportCsvMixin:
