@@ -161,6 +161,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     is_very_benevolent.boolean = True
     list_per_page = 250
     # list_per_page = sys.maxsize
+    # date_hierarchy = 'added_on'
 
 
 @admin.register(Villain)
