@@ -2,6 +2,8 @@ import csv
 from django.db.models import Count
 from django.contrib import admin
 from django.http import HttpResponse
+from django.http.response import HttpResponseRedirect
+from django.urls import path
 from .models import Category, Hero, Villain, Origin
 # Register your models here.
 
@@ -56,6 +58,25 @@ class ExportCsvMixin:
 
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
+    change_list_template = "entities/heroes_changelist.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('immortal/', self.set_immortal),
+            path('mortal/', self.set_mortal),
+        ]
+        return my_urls + urls
+
+    def set_immortal(self, request):
+        self.model.objects.all().update(is_immortal=True)
+        self.message_user(request, "All heroes are now immortal")
+        return HttpResponseRedirect("../")
+
+    def set_mortal(self, request):
+        self.model.objects.all().update(is_immortal=False)
+        self.message_user(request, "All heroes are now mortal")
+        return HttpResponseRedirect("../")
 
     class IsVeryBenevolentFilter(admin.SimpleListFilter):
         title = 'is_very_benevolent'
