@@ -159,6 +159,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
         return obj.benevolence_factor > 75
 
     is_very_benevolent.boolean = True
+    list_per_page = 250
 
 
 @admin.register(Villain)
