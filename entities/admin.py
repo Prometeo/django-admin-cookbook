@@ -1,5 +1,7 @@
-from django.contrib import admin
+import csv
 from django.db.models import Count
+from django.contrib import admin
+from django.http import HttpResponse
 from .models import Category, Hero, Villain, Origin
 # Register your models here.
 
@@ -31,8 +33,29 @@ class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
+class ExportCsvMixin:
+    def export_as_csv(self, request, queryset):
+
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(
+            meta)
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            row = writer.writerow([getattr(obj, field)
+                                   for field in field_names])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected"
+
+
 @admin.register(Hero)
-class HeroAdmin(admin.ModelAdmin):
+class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     class IsVeryBenevolentFilter(admin.SimpleListFilter):
         title = 'is_very_benevolent'
@@ -55,7 +78,7 @@ class HeroAdmin(admin.ModelAdmin):
     list_display = ("name", "is_immortal", "category",
                     "origin", "is_very_benevolent")
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
-    actions = ["mark_immortal"]
+    actions = ["mark_immortal", "export_as_csv"]
 
     def mark_immortal(self, request, queryset):
         queryset.update(is_immortal=True)
@@ -67,5 +90,6 @@ class HeroAdmin(admin.ModelAdmin):
 
 
 @admin.register(Villain)
-class VillainAdmin(admin.ModelAdmin):
-    pass
+class VillainAdmin(admin.ModelAdmin, ExportCsvMixin):
+    list_display = ("name", "category", "origin")
+    actions = ["export_as_csv"]
