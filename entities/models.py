@@ -80,6 +80,11 @@ class Hero(Entity):
     )
 
 
+class HeroAcquaintance(models.Model):
+    "Non family contacts of a Hero"
+    hero = models.OneToOneField(Hero, on_delete=models.CASCADE)
+
+
 class Villain(Entity):
     is_immortal = models.BooleanField(default=False)
 

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import path
-from .models import Category, Hero, Villain, Origin
+from .models import Category, Hero, Villain, Origin, HeroAcquaintance
 # Register your models here.
 
 
@@ -64,6 +64,10 @@ class ExportCsvMixin:
 
 class CsvImportForm(forms.Form):
     csv_file = forms.FileField()
+
+
+class HeroAcquaintanceInline(admin.TabularInline):
+    model = HeroAcquaintance
 
 
 @admin.register(Hero)
@@ -127,6 +131,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
             del actions['delete_selected']
             return actions
 
+    inlines = [HeroAcquaintanceInline]
     list_display = ("name", "is_immortal", "category",
                     "origin", "is_very_benevolent")
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
