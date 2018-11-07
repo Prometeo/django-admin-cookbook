@@ -148,7 +148,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     inlines = [HeroAcquaintanceInline]
     list_display = ("name", "is_immortal", "category",
-                    "origin", "is_very_benevolent")
+                    "origin", "is_very_benevolent", "children_display",)
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
 
@@ -157,6 +157,12 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     def is_very_benevolent(self, obj):
         return obj.benevolence_factor > 75
+
+    def children_display(self, obj):
+        return ", ".join([
+            child.name for child in obj.children.all()
+        ])
+    children_display.short_description = "Children"
 
     is_very_benevolent.boolean = True
     list_per_page = 250
