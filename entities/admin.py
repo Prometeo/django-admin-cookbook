@@ -75,6 +75,12 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                 return queryset.exclude(benevolence_factor__gt=75)
             return queryset
 
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+            return actions
+
     list_display = ("name", "is_immortal", "category",
                     "origin", "is_very_benevolent")
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
