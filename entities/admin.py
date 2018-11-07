@@ -70,9 +70,24 @@ class HeroAcquaintanceInline(admin.TabularInline):
     model = HeroAcquaintance
 
 
+class HeroForm(forms.ModelForm):
+    category_name = forms.CharField()
+
+    class Meta:
+        model = Hero
+        exclude = ["category"]
+
+
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     change_list_template = "entities/heroes_changelist.html"
+    form = HeroForm
+
+    def save_model(self, request, obj, form, change):
+        category_name = form.cleaned_data["category_name"]
+        category, _ = Category.objects.get_or_create(name=category_name)
+        obj.category = category
+        super().save_model(request, obj, form, change)
 
     def get_urls(self):
         urls = super().get_urls()
