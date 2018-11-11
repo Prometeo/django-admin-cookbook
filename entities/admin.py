@@ -153,6 +153,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
     readonly_fields = ["headshot_image"]
+    exclude = ['added_by', ]
 
     def headshot_image(self, obj):
         return mark_safe(
