@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import path
+from django.utils.safestring import mark_safe
 from .models import Category, Hero, Villain, Origin, HeroAcquaintance
 # Register your models here.
 
@@ -151,6 +152,16 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                     "origin", "is_very_benevolent", "children_display",)
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
+    readonly_fields = ["headshot_image"]
+
+    def headshot_image(self, obj):
+        return mark_safe(
+            '<img src="{url}" width="{width}" height={height} />'.format(
+                url=obj.headshot.url,
+                width=obj.headshot.width,
+                height=obj.headshot.height,
+            )
+        )
 
     def mark_immortal(self, request, queryset):
         queryset.update(is_immortal=True)
