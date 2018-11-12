@@ -79,6 +79,11 @@ class HeroForm(forms.ModelForm):
         exclude = ["category"]
 
 
+class CategoryChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "Category: {}".format(obj.name)
+
+
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     change_list_template = "entities/heroes_changelist.html"
@@ -128,6 +133,11 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
         self.model.objects.all().update(is_immortal=False)
         self.message_user(request, "All heroes are now mortal")
         return HttpResponseRedirect("../")
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'category':
+            return CategoryChoiceField(queryset=Category.objects.all())
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     class IsVeryBenevolentFilter(admin.SimpleListFilter):
         title = 'is_very_benevolent'
