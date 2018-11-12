@@ -152,8 +152,14 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                     "origin", "is_very_benevolent", "children_display",)
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
-    readonly_fields = ["headshot_image"]
-    exclude = ['added_by', ]
+    readonly_fields = ["headshot_image", ]
+    exclude = ['added_by']
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ["name", "category"]
+        else:
+            return []
 
     def headshot_image(self, obj):
         return mark_safe(
@@ -186,4 +192,4 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
 class VillainAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("name", "category", "origin")
     actions = ["export_as_csv"]
-    readonly_fields = ["added_on"]
+    # readonly_fields = ["added_on"]
