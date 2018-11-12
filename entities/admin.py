@@ -160,6 +160,8 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     actions = ["mark_immortal", "export_as_csv"]
     readonly_fields = ["headshot_image", ]
     exclude = ['added_by']
+    # raw_id_fields = ["category"] manage a model with a FK with a large
+    # number of objects
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
