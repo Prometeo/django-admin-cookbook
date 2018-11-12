@@ -84,6 +84,12 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     change_list_template = "entities/heroes_changelist.html"
     form = HeroForm
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "category":
+            kwargs["queryset"] = Category.objects.filter(
+                name__in=['God', 'Demi God'])
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     def save_model(self, request, obj, form, change):
         category_name = form.cleaned_data["category_name"]
         category, _ = Category.objects.get_or_create(name=category_name)
