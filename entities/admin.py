@@ -168,16 +168,6 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                     "origin", "is_very_benevolent", "children_display",)
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
-<<<<<<< HEAD
-    readonly_fields = ["headshot_image"]
-
-    def headshot_image(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-            url=obj.headshot.url,
-            width=obj.headshot.width,
-            height=obj.headshot.height,
-        )
-=======
     readonly_fields = ["headshot_image", ]
     exclude = ['added_by']
     # raw_id_fields = ["category"] manage a model with a FK with a large
@@ -196,7 +186,6 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                 width=obj.headshot.width,
                 height=obj.headshot.height,
             )
->>>>>>> 9dd497419ac9dc3e272a99a99945595fe2285b02
         )
 
     def mark_immortal(self, request, queryset):
