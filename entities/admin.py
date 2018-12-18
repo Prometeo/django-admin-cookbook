@@ -79,10 +79,21 @@ class HeroForm(forms.ModelForm):
         exclude = ["category"]
 
 
+class CategoryChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "Category: {}".format(obj.name)
+
+
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     change_list_template = "entities/heroes_changelist.html"
     form = HeroForm
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "category":
+            kwargs["queryset"] = Category.objects.filter(
+                name__in=['God', 'Demi God'])
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
         category_name = form.cleaned_data["category_name"]
@@ -123,6 +134,11 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
         self.message_user(request, "All heroes are now mortal")
         return HttpResponseRedirect("../")
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'category':
+            return CategoryChoiceField(queryset=Category.objects.all())
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     class IsVeryBenevolentFilter(admin.SimpleListFilter):
         title = 'is_very_benevolent'
         parameter_name = 'is_very_benevolent'
@@ -152,6 +168,7 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
                     "origin", "is_very_benevolent", "children_display",)
     list_filter = ("is_immortal", "category", "origin", IsVeryBenevolentFilter)
     actions = ["mark_immortal", "export_as_csv"]
+<<<<<<< HEAD
     readonly_fields = ["headshot_image"]
 
     def headshot_image(self, obj):
@@ -160,6 +177,26 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
             width=obj.headshot.width,
             height=obj.headshot.height,
         )
+=======
+    readonly_fields = ["headshot_image", ]
+    exclude = ['added_by']
+    # raw_id_fields = ["category"] manage a model with a FK with a large
+    # number of objects
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ["name", "category"]
+        else:
+            return []
+
+    def headshot_image(self, obj):
+        return mark_safe(
+            '<img src="{url}" width="{width}" height={height} />'.format(
+                url=obj.headshot.url,
+                width=obj.headshot.width,
+                height=obj.headshot.height,
+            )
+>>>>>>> 9dd497419ac9dc3e272a99a99945595fe2285b02
         )
 
     def mark_immortal(self, request, queryset):
@@ -184,3 +221,4 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
 class VillainAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("name", "category", "origin")
     actions = ["export_as_csv"]
+    # readonly_fields = ["added_on"]

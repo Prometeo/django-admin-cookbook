@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 # Create your models here.
@@ -83,6 +84,20 @@ class Hero(Entity):
     )
     headshot = models.ImageField(
         null=True, blank=True, upload_to="hero_headshots/")
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                 null=True, blank=True,
+                                 on_delete=models.SET_NULL)
+
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.added_by = request.user
+            super().save_model(request, obj, form, change)
+
+    # If we want to always save the current user
+    # def save_model(self, request, obj, form, change):
+    #     obj.added_by = request.user
+    #     super().save_model(request, obj, form, change)
 
 
 class HeroAcquaintance(models.Model):
