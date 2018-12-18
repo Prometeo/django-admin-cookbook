@@ -17,12 +17,15 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.urls import path
 from events.admin import event_admin_site
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('entity-admin/', admin.site.urls),
     path('event-admin/', event_admin_site.urls),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Both admins are available at their respective urls, /entity-admin/ and event-admin/.
 
