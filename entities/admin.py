@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 from .models import Category, Hero, Villain, Origin, HeroAcquaintance
 # Register your models here.
@@ -88,6 +88,18 @@ class CategoryChoiceField(forms.ModelChoiceField):
 class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     change_list_template = "entities/heroes_changelist.html"
     form = HeroForm
+
+    def children_display(self, obj):
+        display_text = ", ".join([
+            "<a href={}>{}</a>".format(
+                reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.model_name),
+                        args=(child.pk,)),
+                child.name)
+            for child in obj.children.all()
+        ])
+        if display_text:
+            return mark_safe(display_text)
+        return "-"
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "category":
