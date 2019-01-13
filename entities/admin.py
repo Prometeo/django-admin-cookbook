@@ -7,7 +7,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.safestring import mark_safe
-from .models import Category, Hero, Villain, Origin, HeroAcquaintance
+from .models import Category, Hero, Villain, Origin, HeroAcquaintance, HeroProxy
 # Register your models here.
 
 
@@ -216,6 +216,11 @@ class HeroAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_per_page = 250
     # list_per_page = sys.maxsize
     # date_hierarchy = 'added_on'
+
+
+@admin.register(HeroProxy)
+class HeroProxyAdmin(admin.ModelAdmin):
+    readonly_fields = ("name", "is_immortal", "category", "origin",)
 
 
 @admin.register(Villain)
