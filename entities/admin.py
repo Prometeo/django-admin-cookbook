@@ -7,7 +7,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.safestring import mark_safe
-from .models import Category, Hero, Villain, Origin, HeroAcquaintance, HeroProxy
+from .models import Category, Hero, Villain, Origin, HeroAcquaintance, HeroProxy, AllEntity
 # Register your models here.
 
 
@@ -228,3 +228,7 @@ class VillainAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("name", "category", "origin")
     actions = ["export_as_csv"]
     # readonly_fields = ["added_on"]
+
+@admin.register(AllEntity)
+class AllEntiryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")

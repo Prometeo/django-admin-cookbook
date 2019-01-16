@@ -55,6 +55,12 @@ class Entity(models.Model):
     class Meta:
         abstract = True
 
+class AllEntity(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = "entities_entity"
 
 class Hero(Entity):
 
